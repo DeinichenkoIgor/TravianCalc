@@ -65,7 +65,7 @@ const ModalNodaVillages: React.FC<ModalNodaVillagesProps> = ({
       allChecked: false,
       individual: [false, false, false, false],
     }
-  ); // Добавьте состояние для чекбоксов "Плюс"
+  ); // Добавьте состояние для чекбоксов "Плюс "
   
   useEffect(() => {
     // Сохраняем данные в localStorage при их изменении
