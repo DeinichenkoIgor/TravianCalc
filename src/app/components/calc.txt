@@ -1,0 +1,71 @@
+Если оазис <Icon.OasisIcons.OasisNon size="20px" /> то
+const Oasis1BonusLumber = 1;
+const Oasis1BonusClay = 1;
+const Oasis1BonusIron = 1;
+const Oasis1BonusCrop = 1;
+
+Если оазис <Icon.OasisIcons.OasisL size="20px" /> то
+const Oasis1BonusLumber = 1,25;
+const Oasis1BonusClay = 1;
+const Oasis1BonusIron = 1;
+const Oasis1BonusCrop = 1;
+
+Если оазис <Icon.OasisIcons.OasisLL size="20px" /> то
+const Oasis1BonusLumber = 1,5;
+const Oasis1BonusClay = 1;
+const Oasis1BonusIron = 1;
+const Oasis1BonusCrop = 1;
+
+Если оазис <Icon.OasisIcons.OasisLC size="20px" /> то
+const Oasis1BonusLumber = 1,25;
+const Oasis1BonusClay = 1;
+const Oasis1BonusIron = 1;
+const Oasis1BonusCrop = 1,25;
+
+Если оазис <Icon.OasisIcons.OasisCl size="20px" /> то
+const Oasis1BonusLumber = 1;
+const Oasis1BonusClay = 1,25;
+const Oasis1BonusIron = 1;
+const Oasis1BonusCrop = 1;
+
+Если оазис <Icon.OasisIcons.OasisClCl size="20px" /> то
+const Oasis1BonusLumber = 1;
+const Oasis1BonusClay = 1,5;
+const Oasis1BonusIron = 1;
+const Oasis1BonusCrop = 1;
+
+Если оазис <Icon.OasisIcons.OasisClC size="20px" /> то
+const Oasis1BonusLumber = 1;
+const Oasis1BonusClay = 1,25;
+const Oasis1BonusIron = 1;
+const Oasis1BonusCrop = 1,25;
+
+Если оазис <Icon.OasisIcons.OasisI size="20px" /> то
+const Oasis1BonusLumber = 1;
+const Oasis1BonusClay = 1;
+const Oasis1BonusIron = 1,25;
+const Oasis1BonusCrop = 1;
+
+Если оазис <Icon.OasisIcons.OasisII size="20px" /> то
+const Oasis1BonusLumber = 1;
+const Oasis1BonusClay = 1;
+const Oasis1BonusIron = 1,5;
+const Oasis1BonusCrop = 1;
+
+Если оазис <Icon.OasisIcons.OasisIC size="20px" /> то
+const Oasis1BonusLumber = 1;
+const Oasis1BonusClay = 1;
+const Oasis1BonusIron = 1,25;
+const Oasis1BonusCrop = 1,25;
+
+Если оазис <Icon.OasisIcons.OasisC size="20px" /> то
+const Oasis1BonusLumber = 1;
+const Oasis1BonusClay = 1;
+const Oasis1BonusIron = 1;
+const Oasis1BonusCrop = 1,25;
+
+Если оазис <Icon.OasisIcons.OasisCC size="20px" /> то
+const Oasis1BonusLumber = 1;
+const Oasis1BonusClay = 1;
+const Oasis1BonusIron = 1;
+const Oasis1BonusCrop = 1,5;

@@ -1,0 +1,240 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import ServerSpeedPanel from "../components/Planner/ServerSpeedPanel";
+import TimePanel from "../components/Planner/TimePanel";
+import Help from "../components/Planner/Help";
+import ShowCoordinates from "../components/Planner/ShowCoordinates";
+import NodesPanel from "../components/Planner/NodesPanel";
+import Nodes4446 from "../components/Planner/Nodes/Villages/Villag4446";
+
+export default function Planner() {
+  const gridSize = 50; // Размер сетки 50x50
+  const cellSize = 40; // Размер ячейки
+
+  const [windowSize, setWindowSize] = useState({ width: 100, height: 100 }); // Минимальный размер экрана
+  const [offset, setOffset] = useState({ top: 0, left: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [startPosition, setStartPosition] = useState({ x: 0, y: 0 });
+  const [selectedCell, setSelectedCell] = useState<number | null>(null); // Для выделения ячейки
+  const [touched, setTouched] = useState(false); // Флаг для предотвращения двойного клика
+  const [nodes, setNodes] = useState<{ type: string; position: number }[]>([]); // Список узлов
+
+  const [isVisible, setIsVisible] = useState(false); // Управляет анимацией видимости
+  const [showPanel, setShowPanel] = useState(false); // Управляет наличием панели в DOM
+
+  // Обновление ширины и высоты окна
+  useEffect(() => {
+    const updateWindowSize = () => {
+      setWindowSize({
+        width: window.innerWidth - 30,
+        height: window.innerHeight - 100,
+      });
+    };
+
+    updateWindowSize();
+    window.addEventListener("resize", updateWindowSize);
+
+    return () => {
+      window.removeEventListener("resize", updateWindowSize);
+    };
+  }, []);
+
+  // Обработка начала перемещения (мышь или касание)
+  const handlePointerDown = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+    setIsDragging(true);
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+
+    setStartPosition({ x: clientX, y: clientY });
+  };
+
+  // Обработка перемещения
+  const handlePointerMove = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+    if (!isDragging) return;
+
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+
+    const deltaX = clientX - startPosition.x;
+    const deltaY = clientY - startPosition.y;
+
+    setOffset((prev) => ({
+      top: prev.top + deltaY,
+      left: prev.left + deltaX,
+    }));
+
+    setStartPosition({ x: clientX, y: clientY });
+  };
+
+  // Завершение перемещения
+  const handlePointerUp = () => {
+    setIsDragging(false);
+  };
+
+  // Обработка выделения ячеек
+  const handleCellTouch = (index: number) => {
+    setTouched(true); // Флаг касания
+    handleCellClick(index);
+  };
+
+  const handleCellClick = (index: number) => {
+    if (touched) {
+      setTouched(false); // Сбрасываем флаг касания
+      return;
+    }
+    setSelectedCell((prev) => (prev === index ? null : index)); // Тоггл выделения
+  };
+
+  // Следим за выделением клетки (меню)
+  useEffect(() => {
+    if (selectedCell !== null) {
+      setShowPanel(true); // Добавляем панель в DOM
+      setTimeout(() => setIsVisible(true), 10); // Запускаем анимацию с небольшой задержкой
+    } else {
+      setIsVisible(false); // Начинаем анимацию скрытия
+      setTimeout(() => setShowPanel(false), 500); // Удаляем панель из DOM после анимации
+    }
+  }, [selectedCell]);
+
+  const handleAddNode = (nodeType: string) => {
+    if (selectedCell !== null) {
+      const row = Math.floor(selectedCell / gridSize);
+      const col = selectedCell % gridSize;
+  
+      // Корректируем координаты с учетом смещения
+      const correctedRow = row - Math.floor(offset.top / cellSize);
+      const correctedCol = col - Math.floor(offset.left / cellSize);
+  
+      console.log("Selected cell:", { row, col });
+      console.log("Offset correction:", { offsetTop: offset.top, offsetLeft: offset.left });
+      console.log("Corrected coordinates:", { correctedRow, correctedCol });
+  
+      if (
+        correctedRow >= 0 &&
+        correctedCol >= 0 &&
+        correctedRow < gridSize &&
+        correctedCol < gridSize
+      ) {
+        const newPosition = correctedRow * gridSize + correctedCol;
+        console.log("Adding node at position:", newPosition);
+        setNodes((prev) => [...prev, { type: nodeType, position: newPosition }]);
+      } else {
+        console.warn("Node is out of bounds!");
+      }
+
+      setSelectedCell(null);
+    }
+  };
+  
+  
+  
+  
+
+  return (
+    <div
+      className="flex items-center justify-center flex-wrap flex-row content-center"
+      onMouseMove={handlePointerMove}
+      onMouseUp={handlePointerUp}
+      onTouchMove={handlePointerMove}
+      onTouchEnd={handlePointerUp}
+    >
+      {/* Координаты столбцов */}
+      <div className="relative flex items-center ml-[20px] border-x-2 border-t-2 border-gray-400 h-[20px] overflow-hidden"
+        style={{ width: `${windowSize.width}px` }} >
+        <div className="absolute flex" style={{ left: `${offset.left}px` }} >
+          {Array.from({ length: gridSize }).map((_, col) => (
+            <div className="flex items-center justify-center border-r border-gray-200 bg-white text-xs box-border h-[40px]"
+              key={col} style={{ width: `${cellSize}px` }} >
+              {col}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Координаты строк */}
+      <div className="relative flex justify-center border-y-2 border-l-2 border-gray-400 w-[20px] overflow-hidden"
+        style={{ height: `${windowSize.height}px` }} >
+        <div className="absolute flex flex-col" style={{ top: `${offset.top}px` }} >
+          {Array.from({ length: gridSize }).map((_, row) => (
+            <div className="flex items-center justify-center border-b border-gray-200 bg-white text-xs box-border w-[40px]"
+              key={row} style={{ height: `${cellSize}px` }} >
+              {row}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex">
+        {/* Контейнер для окна */}
+        <div className="relative border-2 border-gray-400 overflow-hidden"
+          style={{
+            width: `${windowSize.width}px`,
+            height: `${windowSize.height}px`,
+          }}
+          onMouseDown={handlePointerDown}
+          onTouchStart={handlePointerDown} >
+          {/* Слой для тени */}
+          <div className="pointer-events-none absolute inset-0 z-[1]"
+            style={{ boxShadow: "inset 0 0 20px rgba(0, 0, 0, 0.5)" }} >
+          </div>
+          {/* Контейнер сетки */}
+          <div className="absolute grid border-2 border-green-400 cursor-grab box-border bg-green-100 z-0"
+            style={{
+              gridTemplateColumns: `repeat(${gridSize}, ${cellSize}px)`,
+              gridTemplateRows: `repeat(${gridSize}, ${cellSize}px)`,
+              top: `calc(${offset.top}px - 2px)`,
+              left: `calc(${offset.left}px - 2px)`,
+            }} >
+            {Array.from({ length: gridSize * gridSize }).map((_, index) => (
+              <div
+                key={index}
+                onTouchStart={() => handleCellTouch(index)}
+                onClick={() => handleCellClick(index)}
+                className="border border-green-200 box-border"
+                style={{
+                  width: `${cellSize}px`,
+                  height: `${cellSize}px`,
+                  backgroundColor:
+                    selectedCell === index ? "yellow" : "transparent",
+                }}
+              ></div>
+            ))}
+            {/* Отображение добавленных узлов */}
+            {nodes.map((node, idx) => {
+              const col = (node.position % gridSize) + 1;
+              const row = Math.floor(node.position / gridSize) + 1;
+              console.log(
+                `Node rendering debug: position: ${node.position}, calculatedRow: ${row}, calculatedCol: ${col}, gridSize: ${gridSize}`
+              );
+              return (
+                <div
+                  key={idx}
+                  style={{
+                    gridColumn: col,
+                    gridRow: row,
+                    justifySelf: "center",
+                    alignSelf: "center",
+                  }}
+                >
+                  {node.type === "village-4446" && <Nodes4446 />}
+                </div>
+              );
+            })}
+          </div>
+
+          <ServerSpeedPanel /> {/* Панель скорости сервера */}
+          <TimePanel /> {/* Панель времени */}
+          <Help /> {/* Подсказка */}
+          <ShowCoordinates
+            selectedCell={selectedCell}
+            gridSize={gridSize}
+            offset={offset}
+            cellSize={cellSize}
+          /> {/* Вывод координат */}
+          {showPanel && (<NodesPanel isVisible={isVisible} onAddNode={handleAddNode} />)} {/* Панель нодов */}
+        </div>
+      </div>
+    </div>
+  );
+}

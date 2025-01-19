@@ -1,0 +1,281 @@
+import React, { useState } from "react";
+import ReactDOM from "react-dom";
+import Select from "react-select";
+import Icon from "./SVG/Icon";
+import { ArrayProduction } from "./Planner/Arrays/ArrayProduction";
+
+interface ModalNodaVillagesProps {
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
+  position: number;
+  KplLumber: number;
+  KplClay: number;
+  KplIron: number;
+  KplCrop: number;
+}
+
+// Выпадающий список Оазисов
+const oasisOptions = [
+  { value: "OasisNon", label: <Icon.OasisIcons.OasisNon size="20px" /> },
+  { value: "OasisL", label: <Icon.OasisIcons.OasisL size="20px" /> },
+  { value: "OasisLL", label: <Icon.OasisIcons.OasisLL size="20px" /> },
+  { value: "OasisLC", label: <Icon.OasisIcons.OasisLC size="20px" /> },
+  { value: "OasisCl", label: <Icon.OasisIcons.OasisCl size="20px" /> },
+  { value: "OasisClCl", label: <Icon.OasisIcons.OasisClCl size="20px" /> },
+  { value: "OasisClC", label: <Icon.OasisIcons.OasisClC size="20px" /> },
+  { value: "OasisI", label: <Icon.OasisIcons.OasisI size="20px" /> },
+  { value: "OasisII", label: <Icon.OasisIcons.OasisII size="20px" /> },
+  { value: "OasisIC", label: <Icon.OasisIcons.OasisIC size="20px" /> },
+  { value: "OasisC", label: <Icon.OasisIcons.OasisC size="20px" /> },
+  { value: "OasisCC", label: <Icon.OasisIcons.OasisCC size="20px" /> },
+];
+
+const ModalNodaVillages: React.FC<ModalNodaVillagesProps> = ({ 
+  isOpen, 
+  onClose, 
+  title, 
+  position, 
+  KplLumber, 
+  KplClay, 
+  KplIron, 
+  KplCrop 
+}) => {
+
+  // Уровень полей
+  const [levels, setLevels] = useState({ lumber: 10, clay: 10, iron: 10, crop: 10 });
+
+  if (!isOpen) return null;
+
+  // Считаем уровень поля * количество полей
+  const calculateProduction = (count: number, level: number) => {
+    const levelValue = ArrayProduction[`lvl${level}`] || 0;
+    return count * levelValue;
+  };
+
+  // Результат вычисений уровень поля * количество полей
+  const productionLumber = calculateProduction(KplLumber, levels.lumber);
+  const productionClay = calculateProduction(KplClay, levels.clay);
+  const productionIron = calculateProduction(KplIron, levels.iron);
+  const productionCrop = calculateProduction(KplCrop, levels.crop);
+
+  // Бонус с оазисов
+  const Oasis1BonusLumber = 1;
+  const Oasis1BonusClay = 1;
+  const Oasis1BonusIron = 1;
+  const Oasis1BonusCrop = 1;
+
+  return ReactDOM.createPortal(
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-lg p-4">
+        <div className="flex justify-between items-center mb-4">
+          <select>
+            <option>Галлы</option>
+            <option>Римляни</option>
+            <option>Тевтонцы</option>
+            <option>Гунны</option>
+            <option>Египтяне</option>
+            <option>Спартанцы</option>
+            <option>Викинги</option>
+          </select>
+          <h2 className="text-lg font-semibold">{title}-{position}</h2>
+          <button
+            onClick={onClose}
+            className="text-red-500 font-bold text-lg"
+          >
+            ×
+          </button>
+        </div>
+
+        <table className="border-separate border-spacing-2 border border-slate-400 table-auto w-full">
+          <tbody>
+            <tr>
+              <td>Ресурсы</td>
+              <td className="text-center">
+                <div className="flex justify-center">
+                  <Icon.VillagesMenu.Villag4446 size="20px" />
+                </div>
+              </td>
+              <td className="text-center">
+                <div className="flex justify-center">
+                  <Icon.VillagesMenu.Villag4446 size="20px" />
+                </div>
+              </td>
+              <td className="text-center">
+                <div className="flex justify-center">
+                  <Icon.VillagesMenu.Villag4446 size="20px" />
+                </div>
+              </td>
+              <td className="text-center">
+                <div className="flex justify-center">
+                  <Icon.VillagesMenu.Villag4446 size="20px" />
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td className="">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    className="accent-pink-500"
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      document.querySelectorAll('.group-2 input[type="checkbox"]').forEach((checkbox) => {
+                        (checkbox as HTMLInputElement).checked = checked;
+                      });
+                    }}
+                  />
+                  Плюс
+                </div>
+              </td>
+              <td className="text-center group-2">
+                <input type="checkbox" className="accent-pink-500" />
+              </td>
+              <td className="text-center group-2">
+                <input type="checkbox" className="accent-pink-500" />
+              </td>
+              <td className="text-center group-2">
+                <input type="checkbox" className="accent-pink-500" />
+              </td>
+              <td className="text-center group-2">
+                <input type="checkbox" className="accent-pink-500" />
+              </td>
+            </tr>
+            <tr>
+              <td className="">Кол полей</td>
+              <td className="text-center A1">{KplLumber}</td>
+              <td className="text-center">{KplClay}</td>
+              <td className="text-center">{KplIron}</td>
+              <td className="text-center">{KplCrop}</td>
+            </tr>
+            <tr>
+              <td>Ур полей</td>
+              <td className="text-center">
+                <select
+                  className="w-full A2"
+                  value={levels.lumber}
+                  onChange={(e) => setLevels({ ...levels, lumber: Number(e.target.value) })}
+                >
+                  {Array.from({ length: 21 }, (_, i) => (
+                    <option key={i} value={i}>{i}</option>
+                  ))}
+                </select>
+              </td>
+              <td className="text-center">
+                <select
+                  className="w-full"
+                  value={levels.clay}
+                  onChange={(e) => setLevels({ ...levels, clay: Number(e.target.value) })}
+                >
+                  {Array.from({ length: 21 }, (_, i) => (
+                    <option key={i} value={i}>{i}</option>
+                  ))}
+                </select>
+              </td>
+              <td className="text-center">
+                <select
+                  className="w-full"
+                  value={levels.iron}
+                  onChange={(e) => setLevels({ ...levels, iron: Number(e.target.value) })}
+                >
+                  {Array.from({ length: 21 }, (_, i) => (
+                    <option key={i} value={i}>{i}</option>
+                  ))}
+                </select>
+              </td>
+              <td className="text-center">
+                <select
+                  className="w-full"
+                  value={levels.crop}
+                  onChange={(e) => setLevels({ ...levels, crop: Number(e.target.value) })}
+                >
+                  {Array.from({ length: 21 }, (_, i) => (
+                    <option key={i} value={i}>{i}</option>
+                  ))}
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td className="">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    className="accent-pink-500"
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      document.querySelectorAll('.group-1 input[type="checkbox"]').forEach((checkbox) => {
+                        (checkbox as HTMLInputElement).checked = checked;
+                      });
+                    }}
+                  />
+                  Заводы
+                </div>
+              </td>
+              <td className="text-center group-1">
+                <div className="flex items-center justify-center gap-2">
+                  <input type="checkbox" className="accent-pink-500" />
+                  <Icon.VillagesMenu.Villag4446 size="20px" />
+                </div>
+              </td>
+              <td className="text-center group-1">
+                <div className="flex items-center justify-center gap-2">
+                  <input type="checkbox" className="accent-pink-500" />
+                  <Icon.VillagesMenu.Villag4446 size="20px" />
+                </div>
+              </td>
+              <td className="text-center group-1">
+                <div className="flex items-center justify-center gap-2">
+                  <input type="checkbox" className="accent-pink-500" />
+                  <Icon.VillagesMenu.Villag4446 size="20px" />
+                </div>
+              </td>
+              <td className="text-center group-1">
+                <div className="flex items-center justify-center gap-2">
+                  <input type="checkbox" className="accent-pink-500" />
+                  <Icon.VillagesMenu.Villag4446 size="20px" />
+                </div>
+                <div className="flex items-center justify-center gap-2 mt-1">
+                  <input type="checkbox" className="accent-pink-500" />
+                  <Icon.VillagesMenu.Villag4446 size="20px" />
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Производство</td>
+              <td className="text-center A3">{productionLumber}</td>
+              <td className="text-center">{productionClay}</td>
+              <td className="text-center">{productionIron}</td>
+              <td className="text-center">{productionCrop}</td>
+            </tr>
+            <tr className="w-full">
+              <td className="">ЧВР общее</td>
+              <td className="text-center w-full" colSpan={4}>999999</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table className="border-separate border-spacing-2 border border-slate-400 table-auto w-full">
+          <thead>
+            <tr>
+              <th>Оазисы</th>
+              <th>Выбор</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[1, 2, 3].map((oasisNumber) => (
+              <tr key={oasisNumber}>
+                <td>Оазис {oasisNumber}</td>
+                <td>
+                  <Select options={oasisOptions} placeholder="Выберите оазис" />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>,
+    document.body
+  );
+};
+
+export default ModalNodaVillages;
