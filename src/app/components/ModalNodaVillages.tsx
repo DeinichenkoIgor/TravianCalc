@@ -50,6 +50,13 @@ const ModalNodaVillages: React.FC<ModalNodaVillagesProps> = ({
   const [selectedOases, setSelectedOases] = useState<string[]>(
     storedOases ? JSON.parse(storedOases) : ["OasisNon", "OasisNon", "OasisNon"]
   ); // Дефолт Оазисов
+
+  const getSelectedOptions = (oases: string[]) => {
+    return oases.map((oasisValue) =>
+      oasisOptions.find((option) => option.value === oasisValue) || oasisOptions[0]
+    );
+  };
+  
     
   const [factories, setFactories] = useState<any>(
     storedFactories ? JSON.parse(storedFactories) : {
@@ -131,15 +138,18 @@ const OasisData : Record<
   const calculateProduction = (count: number, level: number, serverSpeed: number) => {
     const levelKey = `lvl${level}` as keyof typeof ArrayProduction;
     const levelValue = ArrayProduction[levelKey] || 0;
-    console.log(`Level: ${level}, Server Speed: ${serverSpeed}, Count: ${count}`);
     return count * levelValue * serverSpeed;
   };
   
   const handleOasisChange = (oasisIndex: number, selectedOption: any) => {
     const updatedOases = [...selectedOases];
-    updatedOases[oasisIndex] = selectedOption.value;
+    updatedOases[oasisIndex] = selectedOption.value; // Сохраняем только value
     setSelectedOases(updatedOases);
+  
+    // Обновляем localStorage сразу при изменении
+    localStorage.setItem("selectedOases", JSON.stringify(updatedOases));
   };
+  
 
   // Функция для обновления всех чекбоксов
   const handleAllPlusCheckboxChange = (checked: boolean) => {
@@ -451,6 +461,7 @@ const OasisData : Record<
                   <Select
                     options={oasisOptions}
                     placeholder="Выберите оазис"
+                    value={getSelectedOptions(selectedOases)[oasisNumber]} // Связь с выбранным значением
                     onChange={(selectedOption) => handleOasisChange(oasisNumber, selectedOption)}
                   />
                 </td>
